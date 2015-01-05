@@ -42,7 +42,6 @@ public class KureTlnActivity extends Activity {
 		setContentView(R.layout.base_template);
 		this.context = KureTlnActivity.this;
 		baseLayout = (LinearLayout) findViewById(R.id.baseLayout);
-		scrollView = new FeedScrollView(context);
 		
 		buttonsLayout = (LinearLayout) findViewById(R.id.buttons_layout);
 		
@@ -73,6 +72,7 @@ public class KureTlnActivity extends Activity {
 		JSONArray dataArray = object.getJSONArray("data");
 		JSONObject pagingObject = object.getJSONObject("paging");
 		
+		scrollView = new FeedScrollView(context, pagingObject.getString("next"));
 		for (int i = 0; i < dataArray.length(); i++) {
 			JSONObject jsonObject = (JSONObject) dataArray.get(i);
 			String message = jsonObject.getString("message");
