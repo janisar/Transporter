@@ -16,6 +16,10 @@
 -->
 
 <resources>
+    <string-array name ="sort">
+	    <item>Odavamad enne</item>
+	    <item>Kallimad enne</item>
+	</string-array>
     <string name = "app_name">Transporter</string>
     <string name = "facebook_app_id">1452602638301350</string>
     <string name ="greeting">Tere, </string>

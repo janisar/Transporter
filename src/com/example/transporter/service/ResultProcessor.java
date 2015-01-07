@@ -3,6 +3,8 @@ package com.example.transporter.service;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Point;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
@@ -53,9 +55,14 @@ public class ResultProcessor implements Runnable {
 		
 		LinearLayout layout = new LinearLayout(context);
 		layout.setOrientation(LinearLayout.HORIZONTAL);
+		layout.setBackgroundColor(Color.WHITE);
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		params.setMargins(20, 10, 20, 0);
+		layout.setLayoutParams(params);
 		LinearLayout l = getHeader(user);
 		layout.addView(l);
 		layout.addView(getMessageLayout());
+		
 		scrollViewLayout.addView(layout);
 	}
 
@@ -65,8 +72,8 @@ public class ResultProcessor implements Runnable {
 		LinearLayout result = new LinearLayout(context);
 		result.setBackground(context.getResources().getDrawable(R.drawable.message));
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-			     LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		params.setMargins(5, 20, 20, 0);
+			     LayoutParams.WRAP_CONTENT, 115);
+		params.setMargins(15, 30, 25, 0);
 		result.setLayoutParams(params);
 		TextView textView = new TextView(context);
 		textView.setText(message);
@@ -85,9 +92,9 @@ public class ResultProcessor implements Runnable {
 		result.setOrientation(LinearLayout.VERTICAL);
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 			     140, LinearLayout.LayoutParams.WRAP_CONTENT);
-		params.setMargins(5, 20, 0, 0);
+		params.setMargins(5, 15, 0, 0);
 		result.setLayoutParams(params);
-		result.setPadding(8, 20, 20, 20);
+		result.setPadding(0, 5, 15, 20);
 		if (user != null) {
 			TextView textView = getUserNameView(user);
 			ImageView imageView = new ImageView(context);
@@ -109,7 +116,7 @@ public class ResultProcessor implements Runnable {
 					LayoutParams.WRAP_CONTENT
 					);
 		textView.setTextSize(11);
-		textView.setPadding(0, 0, 0, 10);
+		textView.setPadding(0, 0, 0, 0);
 		textView.setGravity(Gravity.CENTER);
 		textView.setTextColor(Color.parseColor("#686868"));
 		textView.setLayoutParams(params);

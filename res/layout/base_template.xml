@@ -4,30 +4,38 @@
     android:id="@+id/baseLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent" 
-    android:orientation="vertical">
-    <HorizontalScrollView 
-	    android:id="@+id/buttonScroll"
+    android:orientation="horizontal">
+    <LinearLayout 
+		android:id="@+id/menuLayout"
+    	android:layout_width="1dp"
+    	android:layout_height="match_parent" 
+    	android:orientation="vertical">
+    </LinearLayout>
+    <LinearLayout 
+        android:id="@+id/contentLayout"
     	android:layout_width="match_parent"
-    	android:layout_height="35dp" >
+    	android:layout_height="match_parent" 
+    	android:orientation="vertical">
+        
+	    <HorizontalScrollView 
+		    android:id="@+id/buttonScroll"
+	    	android:layout_width="match_parent"
+	    	android:layout_height="35dp" >
+		    <LinearLayout 
+		        android:id="@+id/buttons_layout"
+		        android:layout_width="match_parent"
+		    	android:layout_height="35dp"
+		    	android:orientation="horizontal"
+		        > 
+		    </LinearLayout>
+	    </HorizontalScrollView>
 	    <LinearLayout 
-	        android:id="@+id/buttons_layout"
-	        android:layout_width="match_parent"
-	    	android:layout_height="35dp"
-	    	android:orientation="horizontal"
-	        > 
+	        android:id="@+id/scrollLayout"
+	    	android:layout_width="match_parent"
+	    	android:layout_height="match_parent" 
+	    	android:orientation="vertical">
+	        
 	    </LinearLayout>
-    </HorizontalScrollView>
-	<!-- <ScrollView 
-	    android:id="@+id/scrollView"
-    	android:layout_width="match_parent"
-    	android:layout_height="match_parent" >
-    
-	</ScrollView>
-     -->
-	    <!-- <LinearLayout
-            android:id="@+id/scrollViewLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-        </LinearLayout> -->
+	    
+    </LinearLayout>
 </LinearLayout>

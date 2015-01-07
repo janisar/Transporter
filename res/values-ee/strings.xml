@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Copyright 2010-present Facebook.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
--->
 
 <resources>
+    <string-array name ="sort">
+	    <item>Odavamad enne</item>
+	    <item>Kallimad enne</item>
+	</string-array>
+	<string-array name ="mode">
+	    <item>Pakun küüti</item>
+	    <item>Otsin küüti</item>
+	</string-array>
     <string name = "app_name">Transporter</string>
     <string name = "facebook_app_id">1452602638301350</string>
     <string name = "facebook_login_error">Tekkis viga sisselogimise, palun proovige uuesti.</string>
     <string name ="greeting">Tere, </string>
 	<string name ="kur_tln">Tallinn - Kuressaare - Tallinn</string>
+	<string-array name = "kur_tln_route">
+	    <item>Kuressaare - Tallinn</item>
+	    <item>Tallinn - Kuressaare</item>
+	</string-array>
 	<string name ="today">Täna</string>
 	<string name ="tomorrow">Homme</string>
 	<string name ="choose_date">Kuupäev</string>
 	<string name ="route">Suund</string>
+	<string name ="date">Kuupäev</string>
 	<string name ="price">Hind</string>
+	<string name ="sort">Sorteeri</string>
+	<string name ="friends">Ainult sõprade postitused</string>
     <string name="com_facebook_dialogloginactivity_ok_button">OK</string>
     <string name="com_facebook_like_button_not_liked">Like</string>
     <string name="com_facebook_like_button_liked">Liked</string>
@@ -46,7 +46,7 @@
     <string name="com_facebook_picker_done_button_text">Done</string>
     <string name="com_facebook_choose_friends">Choose Friends</string>
     <string name="com_facebook_nearby">Nearby</string>
-    <string name="loading">Laen...</string>
+    <string name="loading">Laen\.\.\.</string>
     <string name="com_facebook_internet_permission_error_title">AndroidManifest Error</string>
     <string name="com_facebook_internet_permission_error_message">WebView login requires INTERNET permission</string>
     <string name="com_facebook_requesterror_web_login">Your Facebook account is locked. Please log into www.facebook.com to continue.</string>
