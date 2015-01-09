@@ -1,6 +1,7 @@
 package com.example.transporter.web.graph;
 
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.facebook.FacebookRequestError;
@@ -20,7 +21,9 @@ public class FeedService extends AsyncTask<Void, Void, String>{
 	@Override
 	protected String doInBackground(Void... params) {
 		Session session = Session.getActiveSession();
-		Request request = new Request(session, id, null, HttpMethod.GET, new Request.Callback() {
+		Bundle bundle = new Bundle();
+		bundle.putLong("limit", 10);
+		Request request = new Request(session, id, bundle, HttpMethod.GET, new Request.Callback() {
 			public void onCompleted(Response response) {
 				FacebookRequestError error = response.getError();
 				if(error!=null){

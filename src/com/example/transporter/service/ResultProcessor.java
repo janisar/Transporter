@@ -3,16 +3,16 @@ package com.example.transporter.service;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Point;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.transporter.R;
 import com.example.transporter.core.User;
+import com.example.transporter.form.MessageTextView;
 
 public class ResultProcessor implements Runnable {
 	
@@ -34,9 +34,9 @@ public class ResultProcessor implements Runnable {
 	public void run() {
 		String newline = System.getProperty("line.separator");
 		String[] splitted = message.split(newline);
-		if (matchesPattern(splitted)) {
-			addToScrollView(message, user);
-		}
+		addToScrollView(message, user);
+//		if (matchesPattern(splitted)) {
+//		}
 	}
 
 	private boolean matchesPattern(String[] splitted) {
@@ -61,21 +61,93 @@ public class ResultProcessor implements Runnable {
 		layout.setLayoutParams(params);
 		LinearLayout l = getHeader(user);
 		layout.addView(l);
-		layout.addView(getMessageLayout());
+		layout.addView(getContentLayout());
 		
 		scrollViewLayout.addView(layout);
 	}
 
 	
+	private LinearLayout getContentLayout() {
+		LinearLayout vertical = new LinearLayout(context);
+		vertical.setOrientation(LinearLayout.VERTICAL);
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		vertical.setLayoutParams(params);
+		RelativeLayout contentHead = getContentHeadLayout();
+		LinearLayout result = getMessageLayout();
+		RelativeLayout footer = getFooterLayout();
+		vertical.addView(contentHead);
+		vertical.addView(result);
+		vertical.addView(footer);
+		return vertical;
+	}
+
+	@SuppressLint("NewApi")
+	private RelativeLayout getFooterLayout() {
+		RelativeLayout result = new RelativeLayout(context);
+		RelativeLayout.LayoutParams resultParams = new RelativeLayout.LayoutParams(
+				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		result.setLayoutParams(resultParams);
+		ImageView like = new ImageView(context);
+		like.setImageDrawable(context.getResources().getDrawable(R.drawable.comment_box));
+		RelativeLayout.LayoutParams likeParams = new RelativeLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		likeParams.setMargins(0, 4, 15, 0);
+		likeParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		like.setLayoutParams(likeParams);
+		
+		ImageView comment = new ImageView(context);
+		comment.setImageDrawable(context.getResources().getDrawable(R.drawable.facebook_like));
+		RelativeLayout.LayoutParams commentParams = new RelativeLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		commentParams.setMargins(0, 0, 60, 7);
+		commentParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		comment.setLayoutParams(commentParams);
+		result.addView(comment);
+		result.addView(like);
+		
+		ImageView fb = new ImageView(context);
+		fb.setImageDrawable(context.getResources().getDrawable(R.drawable.facebook_icon));
+		RelativeLayout.LayoutParams fbParams = new RelativeLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		fbParams.setMargins(5, 0, 0, 9);
+		fbParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+		fb.setLayoutParams(fbParams);
+		result.addView(fb);
+		return result;
+	}
+
+	private RelativeLayout getContentHeadLayout() {
+		RelativeLayout result = new RelativeLayout(context);
+		TextView route = new TextView(context);
+		route.setText("Kuressaare - Tallinn");
+		route.setTextColor(Color.parseColor("#686868"));
+		route.setTextSize(10);
+		RelativeLayout.LayoutParams routeParams = new RelativeLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		routeParams.setMargins(25, 0, 0, 0);
+		route.setLayoutParams(routeParams);
+		
+		TextView price = new TextView(context);
+		price.setText("Hind €");
+		price.setTextColor(Color.parseColor("#686868"));
+		price.setTextSize(10);
+		RelativeLayout.LayoutParams priceParams = new RelativeLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		routeParams.setMargins(0, 0, 10, 0);
+		priceParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		price.setLayoutParams(priceParams);
+		result.addView(route);
+		result.addView(price);
+		return result;
+	}
+
 	@SuppressLint("NewApi")
 	private LinearLayout getMessageLayout() {
 		LinearLayout result = new LinearLayout(context);
 		result.setBackground(context.getResources().getDrawable(R.drawable.message));
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-			     LayoutParams.WRAP_CONTENT, 115);
-		params.setMargins(15, 30, 25, 0);
-		result.setLayoutParams(params);
-		TextView textView = new TextView(context);
+		result.setMinimumHeight(110);
+		MessageTextView textView = new MessageTextView(context, result);
 		textView.setText(message);
 		textView.setTextColor(Color.parseColor("#686868"));
 		textView.setTextSize(11);

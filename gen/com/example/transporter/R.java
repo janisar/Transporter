@@ -1339,7 +1339,7 @@ containing a value of this type.
         public static final int com_facebook_list_section_header_background=0x7f02006b;
         public static final int com_facebook_loginbutton_silver=0x7f02006c;
         public static final int com_facebook_logo=0x7f02006d;
-        public static final int com_facebook_picker_default_separator_color=0x7f02008b;
+        public static final int com_facebook_picker_default_separator_color=0x7f020090;
         public static final int com_facebook_picker_item_background=0x7f02006e;
         public static final int com_facebook_picker_list_focused=0x7f02006f;
         public static final int com_facebook_picker_list_longpressed=0x7f020070;
@@ -1364,11 +1364,16 @@ containing a value of this type.
         public static final int com_facebook_top_background=0x7f020083;
         public static final int com_facebook_top_button=0x7f020084;
         public static final int com_facebook_usersettingsfragment_background_gradient=0x7f020085;
-        public static final int download=0x7f020086;
-        public static final int ic_launcher=0x7f020087;
-        public static final int menu_icon=0x7f020088;
-        public static final int message=0x7f020089;
-        public static final int pilt=0x7f02008a;
+        public static final int comment=0x7f020086;
+        public static final int comment_box=0x7f020087;
+        public static final int download=0x7f020088;
+        public static final int facebook_icon=0x7f020089;
+        public static final int facebook_like=0x7f02008a;
+        public static final int ic_launcher=0x7f02008b;
+        public static final int menu_icon=0x7f02008c;
+        public static final int message=0x7f02008d;
+        public static final int pilt=0x7f02008e;
+        public static final int refresh_button=0x7f02008f;
     }
     public static final class id {
         public static final int action_bar=0x7f050027;

@@ -13,11 +13,9 @@ import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -30,12 +28,14 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.transporter.core.User;
 import com.example.transporter.form.FeedScrollView;
 import com.example.transporter.service.ResultProcessor;
 import com.example.transporter.service.UserThread;
 import com.example.transporter.util.StringUtils;
+import com.example.transporter.web.graph.ExtraFeedsService;
 import com.example.transporter.web.graph.FeedService;
 
 public class KureTlnActivity extends Activity {
@@ -58,11 +58,13 @@ public class KureTlnActivity extends Activity {
 		this.context = KureTlnActivity.this;
 		baseLayout = (LinearLayout) findViewById(R.id.scrollLayout);
 		baseLayout.setBackgroundColor(Color.parseColor("#DFDFDF"));
+		scrollView = new ScrollView(context);
 		buttonsLayout = (LinearLayout) findViewById(R.id.buttons_layout);
 		menuView = (LinearLayout) findViewById(R.id.menuLayout);
 		initMenuView();
 		scrollViewLayout = new LinearLayout(context);
-		
+		scrollViewLayout.setId(20000);
+
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		scrollViewLayout.setLayoutParams(params);
 		scrollViewLayout.setOrientation(LinearLayout.VERTICAL);
@@ -185,15 +187,42 @@ public class KureTlnActivity extends Activity {
 		JSONArray dataArray = object.getJSONArray("data");
 		JSONObject pagingObject = object.getJSONObject("paging");
 		
-		scrollView = new FeedScrollView(context, pagingObject.getString("next"));
 		for (int i = 0; i < dataArray.length(); i++) {
 			JSONObject jsonObject = (JSONObject) dataArray.get(i);
-			String message = jsonObject.getString("message");
+			String message = null;
 			String from = jsonObject.getJSONObject("from").getString("id");
-			UserThread thread = new UserThread(from);
-			User user = thread.getUser();
-			runOnUiThread(new ResultProcessor(context, scrollViewLayout, user, message));
+			try {
+				message = jsonObject.getString("message");
+				UserThread thread = new UserThread(from);
+				User user = thread.getUser();
+				runOnUiThread(new ResultProcessor(context, scrollViewLayout, user, message));
+			} catch (JSONException ex) {
+				Log.w("FeedProcessor", "Skipping feed '" + jsonObject.getString("id") + "', no message found");
+			}
 		}
+		addRefreshButtonToScrollViewLayout(pagingObject.getString("next"));
+	}
+
+	@SuppressLint("NewApi")
+	private void addRefreshButtonToScrollViewLayout(final String nextFeed) {
+		ImageView refreshButton = new ImageView(context);
+		refreshButton.setImageDrawable(context.getResources().getDrawable(R.drawable.refresh_button));
+		refreshButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+	        	try {
+					String newFeed = new ExtraFeedsService().execute(nextFeed).get();
+					Toast.makeText(context, newFeed, Toast.LENGTH_SHORT).show();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		//refreshButton.setBackground();
+		scrollViewLayout.addView(refreshButton);
 	}
 
 	private void addDefaultButtons() {
