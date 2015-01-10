@@ -14,6 +14,7 @@
     <string name = "facebook_login_error">Tekkis viga sisselogimise, palun proovige uuesti.</string>
     <string name ="greeting">Tere, </string>
 	<string name ="kur_tln">Tallinn - Kuressaare - Tallinn</string>
+	<string name ="hps_tln">Tallinn - Haapsalu - Tallinn</string>
 	<string-array name = "kur_tln_route">
 	    <item>Kuressaare - Tallinn</item>
 	    <item>Tallinn - Kuressaare</item>

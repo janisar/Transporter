@@ -22,5 +22,14 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:text="@string/kur_tln" />
+
+    <Button
+        android:id="@+id/hps_tln"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/kur_tln"
+        android:layout_alignRight="@+id/kur_tln"
+        android:layout_below="@+id/kur_tln"
+        android:text="Button" />
  
 </RelativeLayout>

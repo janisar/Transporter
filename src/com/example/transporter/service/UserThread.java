@@ -2,32 +2,27 @@ package com.example.transporter.service;
 
 import java.util.concurrent.ExecutionException;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.graphics.drawable.Drawable;
 
 import com.example.transporter.core.User;
 import com.example.transporter.web.down.DownloadImageTask;
-import com.example.transporter.web.graph.UserService;
 
 public class UserThread implements Runnable {
 
 	private volatile User user;
-	private String from;
+	private JSONObject from;
 	
-	public UserThread(String from) {
+	public UserThread(JSONObject from) {
 		this.from = from;
+		generateUser();
 		run();
 	}
 
 	@Override
 	public void run() {
-		User user = null;
-		try {
-			user = new UserService().execute(from).get();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
 		if (user != null) {
 			Drawable image = null;
 			try {
@@ -42,6 +37,18 @@ public class UserThread implements Runnable {
 		this.user = user;
 	}
 	
+	private void generateUser() {
+		String name = null;
+		String imageUrl = null;
+		try {
+			name = from.getString("name");
+			imageUrl = from.getJSONObject("picture").getJSONObject("data").getString("url");
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
+		this.user = new User(name, imageUrl);
+	}
+
 	public User getUser() {
 		return user;
 	}

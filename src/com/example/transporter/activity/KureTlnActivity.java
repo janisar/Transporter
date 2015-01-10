@@ -5,7 +5,7 @@ import com.example.transporter.R;
 
 public class KureTlnActivity extends AbstractActivity {
 	
-	private static final String ID = "273758919316437/feed";
+	private static final String ID = "273758919316437";
 
 	@Override
 	protected String getCommunityId() {

@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -34,7 +35,7 @@ import com.facebook.widget.LoginButton.OnErrorListener;
 public class MainActivity extends Activity {
 
 	private LoginButton loginButton;
-	private Button krTlnIntent;
+	private Button krTlnButton, hpsTlnButton;
 	private RelativeLayout baseLayout;
 	private TextView greeting;
 	private Context context;
@@ -56,20 +57,28 @@ public class MainActivity extends Activity {
 		authUser();  
 	}
 
-	@SuppressLint("NewApi")
 	private void initButtons() {
-		krTlnIntent = (Button) findViewById(R.id.kur_tln);
-		krTlnIntent.setText(StringUtils.getString(context, R.string.kur_tln));
-		krTlnIntent.setTextColor(Color.parseColor("#ffffff"));
-		krTlnIntent.setBackground(getResources().getDrawable(R.drawable.com_facebook_button_blue));
-		krTlnIntent.setOnClickListener(new View.OnClickListener() {
-			
+		initButton(krTlnButton, R.id.kur_tln, R.string.kur_tln, buttonListener("android.intent.action.KURETLN"));
+		initButton(hpsTlnButton, R.id.hps_tln, R.string.hps_tln, buttonListener("android.intent.action.HPSTLN"));
+	}
+
+	@SuppressLint("NewApi")
+	private void initButton(Button button, int id, int text, OnClickListener listener) {
+		button = (Button) findViewById(id);
+		button.setText(StringUtils.getString(context, text));
+		button.setTextColor(Color.parseColor("#ffffff"));
+		button.setBackground(getResources().getDrawable(R.drawable.com_facebook_button_blue));
+		button.setOnClickListener(listener);
+	}
+
+	private OnClickListener buttonListener(final String intentName) {
+		return new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent("android.intent.action.KURETLN");
+				Intent intent = new Intent(intentName);
 				startActivity(intent);
 			}
-		});
+		};
 	}
 
 	private void authUser() {

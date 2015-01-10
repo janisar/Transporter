@@ -62,11 +62,16 @@ public abstract class AbstractActivity extends Activity{
 		initScrollViewLayout(width);
 
 		addDefaultButtons();
-	    try {
-			String result = new FeedService(getCommunityId()).execute().get();
-			processResult(result);
-		} catch (Exception e) {
-			Log.e("AbstractActivity", "Can't get result from" + getCommunityId());
+		if (savedInstanceState != null) {
+			
+		} else {
+		    try {
+				String result = new FeedService(getCommunityId()).execute().get();
+				processResult(result);
+			} catch (Exception e) {
+				Log.e("AbstractActivity", "Can't get result from" + getCommunityId());
+				e.printStackTrace();
+			}
 		}
 	    scrollView.addView(scrollViewLayout);
 		baseLayout.addView(scrollView);
@@ -114,21 +119,13 @@ public abstract class AbstractActivity extends Activity{
 	
 	private void processResult(String result) throws JSONException {
 		JSONObject object = new JSONObject(result);
-		JSONArray dataArray = object.getJSONArray("data");
-		JSONObject pagingObject = object.getJSONObject("paging");
+		JSONArray dataArray = object.getJSONObject("feed").getJSONArray("data");
+		JSONObject pagingObject = object.getJSONObject("feed").getJSONObject("paging");
 		
 		for (int i = 0; i < dataArray.length(); i++) {
 			JSONObject jsonObject = (JSONObject) dataArray.get(i);
-			String message = null;
-			String from = jsonObject.getJSONObject("from").getString("id");
-			try {
-				message = jsonObject.getString("message");
-				UserThread thread = new UserThread(from);
-				User user = thread.getUser();
-				runOnUiThread(new ResultProcessor(context, scrollViewLayout, user, message));
-			} catch (JSONException ex) {
-				Log.w("FeedProcessor", "Skipping feed '" + jsonObject.getString("id") + "', no message found");
-			}
+			Log.i("FEED IS ", jsonObject.toString());
+			runOnUiThread(new ResultProcessor(context, scrollViewLayout, jsonObject));
 		}
 		addRefreshButtonToScrollViewLayout(pagingObject.getString("next"));
 	}
