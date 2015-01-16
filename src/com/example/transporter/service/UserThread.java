@@ -1,14 +1,9 @@
 package com.example.transporter.service;
 
-import java.util.concurrent.ExecutionException;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.graphics.drawable.Drawable;
-
 import com.example.transporter.core.User;
-import com.example.transporter.web.down.DownloadImageTask;
 
 public class UserThread implements Runnable {
 
@@ -17,24 +12,12 @@ public class UserThread implements Runnable {
 	
 	public UserThread(JSONObject from) {
 		this.from = from;
-		generateUser();
 		run();
 	}
 
 	@Override
 	public void run() {
-		if (user != null) {
-			Drawable image = null;
-			try {
-				image = new DownloadImageTask().execute(user.getImageUrl()).get();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-			user.setDrawable(image);
-		}
-		this.user = user;
+		generateUser();
 	}
 	
 	private void generateUser() {

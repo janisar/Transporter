@@ -11,25 +11,24 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.transporter.R;
-import com.example.transporter.core.User;
 import com.example.transporter.form.FeedScrollView;
+import com.example.transporter.form.MenuButtonsLayout;
 import com.example.transporter.form.MenuView;
 import com.example.transporter.service.ResultProcessor;
-import com.example.transporter.service.UserThread;
 import com.example.transporter.web.graph.ExtraFeedsService;
 import com.example.transporter.web.graph.FeedService;
 
@@ -42,26 +41,29 @@ public abstract class AbstractActivity extends Activity{
 	//private Session session;
 	private ScrollView scrollView;
 	private LinearLayout baseLayout;
-	private LinearLayout buttonsLayout;
+	private RelativeLayout buttonsLayout;
 	private LinearLayout scrollViewLayout;
 	private LinearLayout menuView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+        WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.base_template);
 		this.context = AbstractActivity.this;
 
 		baseLayout = (LinearLayout) findViewById(R.id.scrollLayout);
 		baseLayout.setBackgroundColor(Color.parseColor("#DFDFDF"));
-		buttonsLayout = (LinearLayout) findViewById(R.id.buttons_layout);
+		buttonsLayout = (RelativeLayout) findViewById(R.id.buttons_layout);
 		menuView = new MenuView(context, (LinearLayout) findViewById(R.id.menuLayout)).getMenuView();
 		initScrollView();
 
 		int width = getWindowWidth();
 		initScrollViewLayout(width);
 
-		addDefaultButtons();
+		addDefaultButtons(width);
 		if (savedInstanceState != null) {
 			
 		} else {
@@ -121,7 +123,6 @@ public abstract class AbstractActivity extends Activity{
 		JSONObject object = new JSONObject(result);
 		JSONArray dataArray = object.getJSONObject("feed").getJSONArray("data");
 		JSONObject pagingObject = object.getJSONObject("feed").getJSONObject("paging");
-		
 		for (int i = 0; i < dataArray.length(); i++) {
 			JSONObject jsonObject = (JSONObject) dataArray.get(i);
 			Log.i("FEED IS ", jsonObject.toString());
@@ -150,37 +151,12 @@ public abstract class AbstractActivity extends Activity{
 		scrollViewLayout.addView(refreshButton);
 	}
 	
-	private void addDefaultButtons() {
-		final ImageView menuButton = new ImageView(context);
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		params.setMargins(0, 10, 10, 10);
-		menuButton.setMaxHeight(35);
-		menuButton.setLayoutParams(params);
-		menuButton.setImageDrawable(context.getResources().getDrawable(R.drawable.menu_icon));
-		menuButton.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				LinearLayout.LayoutParams params;
-				if (menuView.getWidth() > 10) {
-					params = new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT);
-					
-				} else {
-					params = new LinearLayout.LayoutParams(270, LayoutParams.MATCH_PARENT);
-				}
-				menuView.setLayoutParams(params);
-			}
-		});
-		buttonsLayout.addView(menuButton);
+	private void addDefaultButtons(int width) {
+		buttonsLayout.setId(1005);
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, LayoutParams.WRAP_CONTENT);
+		buttonsLayout.setLayoutParams(params);
 		
-		TextView header = new TextView(context);
-		header.setText(getCommunityName());
-		RelativeLayout.LayoutParams headerParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		headerParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-		header.setTextSize(18);
-		header.setTypeface(null, Typeface.BOLD_ITALIC);
-		header.setTextColor(Color.parseColor("#7D8289"));
-		header.setLayoutParams(headerParams);
-		buttonsLayout.addView(header);
+		MenuButtonsLayout layout = new MenuButtonsLayout(context, menuView, getCommunityName());
+		buttonsLayout.addView(layout);
 	}
 }

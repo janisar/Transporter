@@ -2,14 +2,15 @@ package com.example.transporter.activity;
 
 public class HpsTlnActivity extends AbstractActivity {
 
+	private static final String ID = "288255747941908";
+	
 	@Override
 	protected String getCommunityId() {
-		return "288255747941908";
+		return ID;
 	}
 
 	@Override
 	protected String getCommunityName() {
 		return "Haapsalu - Tallinn - Haapsalu";
 	}
-
 }

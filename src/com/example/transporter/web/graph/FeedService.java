@@ -22,7 +22,7 @@ public class FeedService extends AsyncTask<Void, Void, String>{
 	protected String doInBackground(Void... params) {
 		Session session = Session.getActiveSession();
 		Bundle bundle = new Bundle();
-		bundle.putString("fields", "feed.limit(10){message,actions,comments,from{picture,name,id}}");
+		bundle.putString("fields", "feed.limit(15){message,actions,comments.limit(10){from{name,picture},message,created_time,can_comment,can_like,likes},from{name,picture}}");
 		Request request = new Request(session, id, bundle, HttpMethod.GET, new Request.Callback() {
 			public void onCompleted(Response response) {
 				FacebookRequestError error = response.getError();

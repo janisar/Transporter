@@ -26,6 +26,7 @@
 	<string name ="date">Kuupäev</string>
 	<string name ="price">Hind</string>
 	<string name ="sort">Sorteeri</string>
+	<string name ="new_post">Uus</string>
 	<string name ="friends">Ainult sõprade postitused</string>
     <string name="com_facebook_dialogloginactivity_ok_button">OK</string>
     <string name="com_facebook_like_button_not_liked">Like</string>

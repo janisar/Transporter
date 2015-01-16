@@ -22,7 +22,6 @@
         <activity
             android:name="com.example.transporter.activity.MainActivity"
             android:label="@string/app_name" 
-            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,7 +37,6 @@
         <activity
             android:name="com.example.transporter.activity.KureTlnActivity"
             android:label="@string/app_name" 
-            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.KURETLN" />
@@ -49,8 +47,7 @@
         <activity
             android:name="com.example.transporter.activity.HpsTlnActivity"
             android:label="@string/app_name" 
-            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
-            android:screenOrientation="portrait">
+       	    android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.HPSTLN" />
 
