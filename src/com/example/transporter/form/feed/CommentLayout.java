@@ -7,15 +7,22 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.view.Gravity;
+import android.os.Build;
+import android.text.Html;
+import android.util.Xml.Encoding;
 import android.view.View;
+import android.webkit.MimeTypeMap;
+import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.LinearLayout.LayoutParams;
 
 import com.example.transporter.R;
 
 public class CommentLayout extends LinearLayout {
 
+	public static final int IMAGE_URL_ID = 9001; 
+	
 	private Context context;
 	private JSONObject comments;
 	private LinearLayout.LayoutParams defaultParams;
@@ -46,38 +53,49 @@ public class CommentLayout extends LinearLayout {
 			JSONArray array = comments.getJSONArray("data");
 			for (int i = 0; i < array.length(); i++) {
 				JSONObject object = (JSONObject) array.get(i);
-				LinearLayout commentDataLayout = processComment(object);
-				commentLayout.addView(commentDataLayout);
+				processComment(object);
 			}
 			return commentLayout;
 		} else return null;
 	}
 
-	private LinearLayout processComment(JSONObject object) throws JSONException {
+	private void processComment(JSONObject object) throws JSONException {
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		params.setMargins(0, 2, 0, 1);
 		LinearLayout commentDataLayout = getTextWithoutDateLayout();
 		commentDataLayout.setBackgroundColor(Color.parseColor("#ECECEC"));
+		commentDataLayout.setLayoutParams(params);
 		
 		String imageUrl = object.getJSONObject("from").getJSONObject("picture").getJSONObject("data").getString("url");
 		String message = object.getString("message");
 		String date = object.getString("created_time");
 		String name = object.getJSONObject("from").getString("name");
 		
-		LinearLayout imageLayout = getImageLayout();
+		LinearLayout imageLayout = getImageLayout(imageUrl);
 		LinearLayout textLayout = getTextLayout();
 		LinearLayout textWithoutDateLayout = getTextWithoutDateLayout();
 		
-		TextView nameText = getNameText(name);
-		TextView m = getMessage(message);
+		TextView nameText = getNameText(name, message);
 		TextView dateText = getDate(date);
+		TextView imageUrlText = getImageUrlText(imageUrl);
 		
 		textWithoutDateLayout.addView(nameText);
-		textWithoutDateLayout.addView(m);
 		textLayout.addView(textWithoutDateLayout);
 		textLayout.addView(dateText);
 		
 		commentDataLayout.addView(imageLayout);
 		commentDataLayout.addView(textLayout);
-		return commentDataLayout;
+		commentLayout.addView(commentDataLayout);
+		commentLayout.addView(imageUrlText);
+	}
+
+	private TextView getImageUrlText(String imageUrl) {
+		TextView textView = new TextView(context);
+		textView.setText(imageUrl);
+		textView.setTextSize(1);
+		textView.setVisibility(View.INVISIBLE);
+		textView.setId(IMAGE_URL_ID);
+		return textView;
 	}
 
 	private TextView getDate(String date) {
@@ -88,21 +106,11 @@ public class CommentLayout extends LinearLayout {
 		return dateText;
 	}
 
-	private TextView getMessage(String message) {
-		TextView m = new TextView(context);
-		m.setText(message);
-		m.setTextColor(Color.parseColor("#686868"));
-		m.setTextSize(10);
-		m.setGravity(Gravity.CENTER);
-		return m;
-	}
-
-	private TextView getNameText(String name) {
+	private TextView getNameText(String name, String message) {
 		TextView nameText = new TextView(context);
-		nameText.setText(name + "  ");
+		nameText.setText(Html.fromHtml("<font color ='#6074AB'>" + name + "  " + "</font><font color='#686868'>" + message + "</a>"));
 		nameText.setTextColor(Color.parseColor("#6074AB"));
 		nameText.setTextSize(10);
-		nameText.setGravity(Gravity.CENTER);
 		return nameText;
 	}
 
@@ -121,32 +129,34 @@ public class CommentLayout extends LinearLayout {
 		return textLayout;
 	}
 
-	@SuppressLint("NewApi")
-	private LinearLayout getImageLayout() {
+	@SuppressLint({ "NewApi", "SetJavaScriptEnabled" })
+	private LinearLayout getImageLayout(String imageUrl) {
 		LinearLayout imageLayout = new LinearLayout(context);
-		imageLayout.setBackground(context.getResources().getDrawable(R.drawable.pilt));
+		imageLayout.setBackgroundColor(Color.parseColor("#ECECEC"));
 		
 		imageLayout.setOrientation(LinearLayout.VERTICAL);
-		imageLayout.setPadding(0, 0, 10, 0);
 		LinearLayout.LayoutParams nameParams = new LinearLayout.LayoutParams(70, 80);
 		imageLayout.setLayoutParams(nameParams);
 		
-		TextView n = new TextView(context);
-		n.setText(" ");
-		imageLayout.addView(n);
+		WebView webView = new WebView(context);
+		webView.getSettings().setJavaScriptEnabled(true);
+		webView.loadDataWithBaseURL("", "<img src = '" + imageUrl + "' width='25px' height='25px'>", "text/html", "UTF-8", "");
+		webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+		
+		imageLayout.addView(webView);
 		return imageLayout;
 	}
 	
 	public void hideComment() {
 		defaultParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, 0);
-		defaultParams.setMargins(90, 0, 0, 0);
+		defaultParams.setMargins(90, 0, 20, 0);
 		commentLayout.setLayoutParams(defaultParams);
 		active = false;
 	}
 	
 	public void showComment() {
 		defaultParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		defaultParams.setMargins(90, 0, 0, 0);
+		defaultParams.setMargins(90, 0, 20, 0);
 		commentLayout.setLayoutParams(defaultParams);
 		active = true;
 	}
