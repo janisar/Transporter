@@ -1,7 +1,6 @@
 package com.example.transporter.form;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -9,6 +8,8 @@ import android.widget.TextView;
 public class MessageTextView extends TextView {
 
 	private LinearLayout parent;
+	
+	boolean sizeChanged = false;
 	
 	public MessageTextView(Context context, LinearLayout parent) {
 		super(context);
@@ -18,14 +19,16 @@ public class MessageTextView extends TextView {
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
-		Log.i("Hello", "height is " + h);
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-				LayoutParams.MATCH_PARENT, h + 30);
-		this.setLayoutParams(params);
-		
-		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-				LayoutParams.MATCH_PARENT, h + 30);
-		layoutParams.setMargins(15, 3, 25, 20);
-		parent.setLayoutParams(layoutParams);
+		if (!sizeChanged) {
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+					LayoutParams.MATCH_PARENT, h + 40);
+			this.setLayoutParams(params);
+			
+			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+					LayoutParams.MATCH_PARENT, h + 40);
+			layoutParams.setMargins(15, 3, 25, 20);
+			parent.setLayoutParams(layoutParams);
+		}
+		sizeChanged = true;
 	}
 }

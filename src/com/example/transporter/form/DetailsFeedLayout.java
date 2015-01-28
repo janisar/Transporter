@@ -10,12 +10,11 @@ import android.widget.RelativeLayout;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
-import com.facebook.android.Facebook;
 import com.facebook.model.GraphUser;
 
+@Deprecated
 public class DetailsFeedLayout extends RelativeLayout {
 
-	private Facebook facebook;
 	private Session session;
 	private Context context;
 	private String url;

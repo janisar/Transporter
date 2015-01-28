@@ -8,7 +8,10 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -25,12 +28,14 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.example.transporter.R;
+import com.example.transporter.core.User;
 import com.example.transporter.form.FeedScrollView;
 import com.example.transporter.form.MenuButtonsLayout;
 import com.example.transporter.form.MenuView;
 import com.example.transporter.service.ResultProcessor;
 import com.example.transporter.web.graph.ExtraFeedsService;
 import com.example.transporter.web.graph.FeedService;
+import com.example.transporter.web.graph.MeFeedService;
 
 public abstract class AbstractActivity extends Activity{
 	
@@ -48,9 +53,30 @@ public abstract class AbstractActivity extends Activity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		boolean processResult = false;
+		String result = null;
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
         WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        try {
+			result = new FeedService(this, getCommunityId()).execute().get();
+			if (result.equals("ERROR")) {
+				new AlertDialog.Builder(this).setTitle("Viga").setMessage("Logige Facebooki sisse ning proovige uuesti.").setNeutralButton("OK", new OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						finish();
+						finishActivity(100);
+					}
+				}).show();
+				onDestroy();
+			} else {
+				processResult = true;
+			}
+		} catch (Exception e) {
+			Log.e("AbstractActivity", "Can't get result from" + getCommunityId());
+			e.printStackTrace();
+		}
 		setContentView(R.layout.base_template);
 		this.context = AbstractActivity.this;
 
@@ -67,15 +93,16 @@ public abstract class AbstractActivity extends Activity{
 		if (savedInstanceState != null) {
 			
 		} else {
-		    try {
-				String result = new FeedService(getCommunityId()).execute().get();
-				processResult(result);
+			try {
+				if (processResult) {
+					processResult(result, width);
+				}
 			} catch (Exception e) {
 				Log.e("AbstractActivity", "Can't get result from" + getCommunityId());
 				e.printStackTrace();
 			}
 		}
-	    scrollView.addView(scrollViewLayout);
+		scrollView.addView(scrollViewLayout);
 		baseLayout.addView(scrollView);
 	}
 
@@ -119,14 +146,15 @@ public abstract class AbstractActivity extends Activity{
 		return width;
 	}
 	
-	private void processResult(String result) throws JSONException {
+	private void processResult(String result, int width) throws JSONException, InterruptedException, ExecutionException {
 		JSONObject object = new JSONObject(result);
 		JSONArray dataArray = object.getJSONObject("feed").getJSONArray("data");
 		JSONObject pagingObject = object.getJSONObject("feed").getJSONObject("paging");
+		User me = new MeFeedService().execute().get();
 		for (int i = 0; i < dataArray.length(); i++) {
 			JSONObject jsonObject = (JSONObject) dataArray.get(i);
 			Log.i("FEED IS ", jsonObject.toString());
-			runOnUiThread(new ResultProcessor(context, scrollViewLayout, jsonObject));
+			runOnUiThread(new ResultProcessor(context, scrollViewLayout, jsonObject, width, me));
 		}
 		addRefreshButtonToScrollViewLayout(pagingObject.getString("next"));
 	}

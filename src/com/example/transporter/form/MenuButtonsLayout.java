@@ -5,10 +5,13 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.RelativeLayout.LayoutParams;
 
 import com.example.transporter.R;
 
@@ -47,9 +50,15 @@ public class MenuButtonsLayout extends RelativeLayout {
 		add.setTextColor(Color.parseColor("#7D8289"));
 		innerLayout.addView(add);
 		
+		RelativeLayout newPostLayout = new RelativeLayout(context);
 		ImageView addNewPost = new ImageView(context);
 		addNewPost.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_menu_add));
-		innerLayout.addView(addNewPost);
+		RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		p.addRule(RelativeLayout.CENTER_VERTICAL);
+		newPostLayout.setLayoutParams(p);
+		newPostLayout.addView(addNewPost);
+		
+		innerLayout.addView(newPostLayout);
 		layout.addView(innerLayout);
 		this.addView(layout);
 	}
@@ -59,13 +68,26 @@ public class MenuButtonsLayout extends RelativeLayout {
 		params.addRule(RelativeLayout.CENTER_IN_PARENT);
 		headerLayout.setLayoutParams(params);
 		
-		TextView header = new TextView(context);
-		header.setText(communityName);
-		header.setTextSize(16);
-		header.setTypeface(null, Typeface.BOLD_ITALIC);
-		header.setTextColor(Color.parseColor("#7D8289"));
-		headerLayout.addView(header);
+		RelativeLayout spinnerLayout = new RelativeLayout(context);
+		RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		p.addRule(RelativeLayout.CENTER_VERTICAL);
+		spinnerLayout.setLayoutParams(p);
+		Spinner header = initSpinner(R.array.kur_tln_route);
+		spinnerLayout.addView(header);
+		//header.setTextSize(16);
+		//header.setTextColor(Color.parseColor("#7D8289"));
+		headerLayout.addView(spinnerLayout);
 		this.addView(headerLayout);
+	}
+	
+	private Spinner initSpinner(int id) {
+		Spinner sort = new Spinner(context);
+		
+		ArrayAdapter<CharSequence> sortAdapter = ArrayAdapter.createFromResource(context,
+		        id, android.R.layout.simple_spinner_item);
+		sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		sort.setAdapter(sortAdapter);
+		return sort;
 	}
 	
 	private void addMenuButtonLayout() {

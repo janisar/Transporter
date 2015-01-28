@@ -7,57 +7,65 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Build;
 import android.text.Html;
-import android.util.Xml.Encoding;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.webkit.WebView;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
-
-import com.example.transporter.R;
 
 public class CommentLayout extends LinearLayout {
 
 	public static final int IMAGE_URL_ID = 9001; 
 	
 	private Context context;
-	private JSONObject comments;
-	private LinearLayout.LayoutParams defaultParams;
+	protected LinearLayout.LayoutParams defaultParams;
 	private LinearLayout commentLayout;
 	private boolean active = false;
+	private boolean changeParams = true;
 
 	
 	public CommentLayout(Context context, JSONObject comments) {
 		super(context);
 		this.context = context;
-		this.comments = comments;
 		try {
-			addView(getCommentLayout());
+			View view = initCommentLayout(comments);
+			addView(view);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		hideComment();
 	}
-
-	private View getCommentLayout() throws JSONException {
-		if (comments != null) {
-			defaultParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		
-			commentLayout = new LinearLayout(context);
-			commentLayout.setOrientation(LinearLayout.VERTICAL);
+	
+	public CommentLayout(Context context, JSONObject comments, boolean changeParams) {
+		super(context);
+		this.context = context;
+		this.changeParams = changeParams;
+		try {
+			initCommentLayout(comments);
+			defaultParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			commentLayout.setLayoutParams(defaultParams);
+			addView(commentLayout);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		hideComment();
+	}
+	protected LinearLayout initCommentLayout(JSONObject comments) throws JSONException {
+		commentLayout = new LinearLayout(context);
+		if (comments != null) {
+		
+			commentLayout.setOrientation(LinearLayout.VERTICAL);
 			
 			JSONArray array = comments.getJSONArray("data");
 			for (int i = 0; i < array.length(); i++) {
 				JSONObject object = (JSONObject) array.get(i);
 				processComment(object);
 			}
-			return commentLayout;
-		} else return null;
+		}
+		return commentLayout;
 	}
+
 
 	private void processComment(JSONObject object) throws JSONException {
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -77,7 +85,6 @@ public class CommentLayout extends LinearLayout {
 		
 		TextView nameText = getNameText(name, message);
 		TextView dateText = getDate(date);
-		TextView imageUrlText = getImageUrlText(imageUrl);
 		
 		textWithoutDateLayout.addView(nameText);
 		textLayout.addView(textWithoutDateLayout);
@@ -86,16 +93,14 @@ public class CommentLayout extends LinearLayout {
 		commentDataLayout.addView(imageLayout);
 		commentDataLayout.addView(textLayout);
 		commentLayout.addView(commentDataLayout);
-		commentLayout.addView(imageUrlText);
 	}
 
-	private TextView getImageUrlText(String imageUrl) {
-		TextView textView = new TextView(context);
-		textView.setText(imageUrl);
-		textView.setTextSize(1);
-		textView.setVisibility(View.INVISIBLE);
-		textView.setId(IMAGE_URL_ID);
-		return textView;
+	protected EditText getNewCommentEditText() {
+		EditText newComment = new EditText(context);
+		newComment.setLines(2);
+		newComment.setHint("Kirjuta kommentaar");
+		newComment.setTextSize(11);
+		return newComment;
 	}
 
 	private TextView getDate(String date) {
@@ -110,17 +115,17 @@ public class CommentLayout extends LinearLayout {
 		TextView nameText = new TextView(context);
 		nameText.setText(Html.fromHtml("<font color ='#6074AB'>" + name + "  " + "</font><font color='#686868'>" + message + "</a>"));
 		nameText.setTextColor(Color.parseColor("#6074AB"));
-		nameText.setTextSize(10);
+		nameText.setTextSize((float) 10.5);
 		return nameText;
 	}
 
-	private LinearLayout getTextWithoutDateLayout() {
+	protected LinearLayout getTextWithoutDateLayout() {
 		LinearLayout textWithoutDateLayout = new LinearLayout(context);
 		textWithoutDateLayout.setOrientation(LinearLayout.HORIZONTAL);
 		return textWithoutDateLayout;
 	}
 
-	private LinearLayout getTextLayout() {
+	protected LinearLayout getTextLayout() {
 		LinearLayout textLayout = new LinearLayout(context);
 		textLayout.setOrientation(LinearLayout.VERTICAL);
 		LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -130,18 +135,23 @@ public class CommentLayout extends LinearLayout {
 	}
 
 	@SuppressLint({ "NewApi", "SetJavaScriptEnabled" })
-	private LinearLayout getImageLayout(String imageUrl) {
+	protected LinearLayout getImageLayout(String imageUrl) {
 		LinearLayout imageLayout = new LinearLayout(context);
 		imageLayout.setBackgroundColor(Color.parseColor("#ECECEC"));
 		
 		imageLayout.setOrientation(LinearLayout.VERTICAL);
-		LinearLayout.LayoutParams nameParams = new LinearLayout.LayoutParams(70, 80);
+		LinearLayout.LayoutParams nameParams = new LinearLayout.LayoutParams(65, 70);
+		nameParams.setMargins(5, 0, 5, 0);
 		imageLayout.setLayoutParams(nameParams);
 		
 		WebView webView = new WebView(context);
 		webView.getSettings().setJavaScriptEnabled(true);
-		webView.loadDataWithBaseURL("", "<img src = '" + imageUrl + "' width='25px' height='25px'>", "text/html", "UTF-8", "");
+		webView.loadDataWithBaseURL("", "<img src = '" + imageUrl + "' width='45px'>", "text/html", "UTF-8", "");
 		webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+		webView.setBackgroundColor(Color.parseColor("#ECECEC"));
+		LinearLayout.LayoutParams webViewParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		webViewParams.setMargins(-15, -20, 0, 0);	
+		webView.setLayoutParams(webViewParams);
 		
 		imageLayout.addView(webView);
 		return imageLayout;
@@ -149,14 +159,14 @@ public class CommentLayout extends LinearLayout {
 	
 	public void hideComment() {
 		defaultParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, 0);
-		defaultParams.setMargins(90, 0, 20, 0);
 		commentLayout.setLayoutParams(defaultParams);
 		active = false;
 	}
 	
 	public void showComment() {
-		defaultParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		defaultParams.setMargins(90, 0, 20, 0);
+		defaultParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		defaultParams.setMargins(20, 0, 20, 0);
+		
 		commentLayout.setLayoutParams(defaultParams);
 		active = true;
 	}

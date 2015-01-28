@@ -40,6 +40,7 @@ public class MainActivity extends Activity {
 	private Button krTlnButton, hpsTlnButton;
 	private RelativeLayout baseLayout;
 	private TextView greeting;
+	private TextView userName;
 	private Context context;
 	private Session session;
 	
@@ -82,11 +83,13 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(intentName);
+				intent.putExtra("userName", userName.getText());
 				startActivity(intent);
 			}
 		};
 	}
 
+	
 	private void authUser() {
 		session = Session.getActiveSession();
 		if (session != null && session.isOpened()) {
@@ -97,6 +100,8 @@ public class MainActivity extends Activity {
 	                if (session == Session.getActiveSession()) {
 	                    if (user != null) {
 	                        String profileName = user.getName();
+	                        userName = new TextView(context);
+	                        userName.setText(profileName);
 	                        greeting.setText(StringUtils.getString(context, R.string.greeting) + " " + profileName + "!");
 	                        greeting.setTextColor(Color.parseColor("#AFAFAF"));
 	                        greeting.setVisibility(View.VISIBLE);

@@ -34,14 +34,19 @@ public class ResultProcessor extends Activity implements Runnable {
 	private String message;
 	private User user;
 	private String regexMather1 = "(.*[Kk][uU][Rr](e)?(ssaare)?([->\\s]*)[Tt](a)?[Ll](lin)?[Nn].*)|(.*Kuressaarest.*)|(.*[Tt](a)?llinnasse.*)";
+	private User me;
+	private int width;
 	private static final String FACEBOOK_PENDING_GIF = "https://fbstatic-a.akamaihd.net/rsrc.php/v2/yb/r/GsNJNwuI-UM.gif";
 	
-	public ResultProcessor(Context context, LinearLayout scrollViewLayout, JSONObject jsonObject) {
+	public ResultProcessor(Context context, LinearLayout scrollViewLayout, JSONObject jsonObject, int width, User me) {
 		this.context = context;
 		this.scrollViewLayout = scrollViewLayout;
 		this.object = jsonObject;
+		this.width = width;
+		this.me = me;
 		generateUser();
 	}
+
 
 	private void generateUser() {
 		JSONObject from = null;
@@ -88,8 +93,8 @@ public class ResultProcessor extends Activity implements Runnable {
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		params.setMargins(20, 10, 20, 0);
 		layout.setLayoutParams(params);
-		layout.addView(new HeaderLayout(context, user));
-		ContentLayout contentLayout = new ContentLayout(context, comments, message);
+		layout.addView(new HeaderLayout(context, user, width));
+		ContentLayout contentLayout = new ContentLayout(context, comments, message, me, object.getString("id"));
 		layout.addView(contentLayout);
 		scrollViewLayout.addView(layout);
 		contentLayout.addCommentListener(scrollViewLayout);
