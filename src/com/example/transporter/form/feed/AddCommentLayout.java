@@ -99,12 +99,17 @@ public class AddCommentLayout extends CommentLayout {
 			public void onClick(View v)  {
 				if (newComment != null && !newComment.getText().toString().equals("")) {
 					Toast.makeText(context, "Postitan '" + id + "' sõnumi : " + newComment.getText() , Toast.LENGTH_LONG).show();
+					//TODO: remove comment:
 					//new CommentAdderService(id).execute(newComment.getText().toString());
 					newComment.setText("");
 					try {
 						JSONObject o = new JSONObject(new CommentService().execute(id).get());
 						commentLayout.removeAllViews();
-						commentLayout.addView(commentLayout.initCommentLayout(o.getJSONObject("comments")));
+						LinearLayout l = commentLayout.initCommentLayout(o.getJSONObject("comments"));
+						LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+						l.setLayoutParams(params);
+						commentLayout.setMarginLock(true);
+						commentLayout.addView(l);
 						setDefaultParams();
 					} catch (JSONException | InterruptedException
 							| ExecutionException e) {

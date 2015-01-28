@@ -22,8 +22,8 @@ public class CommentLayout extends LinearLayout {
 	protected LinearLayout.LayoutParams defaultParams;
 	private LinearLayout commentLayout;
 	private boolean active = false;
-	private boolean changeParams = true;
-
+	private boolean marginLock = false;
+	
 	
 	public CommentLayout(Context context, JSONObject comments) {
 		super(context);
@@ -37,20 +37,6 @@ public class CommentLayout extends LinearLayout {
 		hideComment();
 	}
 	
-	public CommentLayout(Context context, JSONObject comments, boolean changeParams) {
-		super(context);
-		this.context = context;
-		this.changeParams = changeParams;
-		try {
-			initCommentLayout(comments);
-			defaultParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-			commentLayout.setLayoutParams(defaultParams);
-			addView(commentLayout);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		hideComment();
-	}
 	protected LinearLayout initCommentLayout(JSONObject comments) throws JSONException {
 		commentLayout = new LinearLayout(context);
 		if (comments != null) {
@@ -165,13 +151,18 @@ public class CommentLayout extends LinearLayout {
 	
 	public void showComment() {
 		defaultParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		defaultParams.setMargins(20, 0, 20, 0);
-		
+		if (!marginLock) {
+			defaultParams.setMargins(20, 0, 20, 0);
+		}
 		commentLayout.setLayoutParams(defaultParams);
 		active = true;
 	}
 
 	public boolean isActive() {
 		return active;
+	}
+
+	public void setMarginLock(boolean lock) {
+		marginLock = lock;
 	}
 }

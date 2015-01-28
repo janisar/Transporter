@@ -20,7 +20,9 @@ public class CommentAdderService extends AsyncTask<String, Void, Void> {
 		Session session = Session.getActiveSession();
 		Bundle bundle = new Bundle();
 		bundle.putString("message", params[0]);
-		new Request(session, postId, bundle, HttpMethod.POST);
+		Request r = new Request(session, postId, bundle, HttpMethod.POST);
+		
+		Request.executeAndWait(r);
 		return null;
 	}
 }

@@ -1,28 +1,16 @@
 package com.example.transporter.service;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
-import android.webkit.WebView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.example.transporter.R;
 import com.example.transporter.core.User;
-import com.example.transporter.form.MessageTextView;
-import com.example.transporter.form.feed.CommentLayout;
 import com.example.transporter.form.feed.ContentLayout;
 import com.example.transporter.form.feed.HeaderLayout;
 
@@ -53,6 +41,7 @@ public class ResultProcessor extends Activity implements Runnable {
 		try {
 			from = object.getJSONObject("from");
 		} catch (JSONException e) {
+			Log.e("JSONOBJECT", object.toString());
 			e.printStackTrace();
 		}
 		this.user = new UserThread(from).getUser();

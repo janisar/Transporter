@@ -25,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.Toast;
 
 import com.example.transporter.R;
 import com.example.transporter.core.User;
@@ -43,12 +42,12 @@ public abstract class AbstractActivity extends Activity{
 	protected abstract String getCommunityName();
 	
 	private Context context;
-	//private Session session;
 	private ScrollView scrollView;
 	private LinearLayout baseLayout;
 	private RelativeLayout buttonsLayout;
 	private LinearLayout scrollViewLayout;
 	private LinearLayout menuView;
+	private User me;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +94,7 @@ public abstract class AbstractActivity extends Activity{
 		} else {
 			try {
 				if (processResult) {
-					processResult(result, width);
+					processResult(new JSONObject(result).getJSONObject("feed"), width);
 				}
 			} catch (Exception e) {
 				Log.e("AbstractActivity", "Can't get result from" + getCommunityId());
@@ -146,11 +145,10 @@ public abstract class AbstractActivity extends Activity{
 		return width;
 	}
 	
-	private void processResult(String result, int width) throws JSONException, InterruptedException, ExecutionException {
-		JSONObject object = new JSONObject(result);
-		JSONArray dataArray = object.getJSONObject("feed").getJSONArray("data");
-		JSONObject pagingObject = object.getJSONObject("feed").getJSONObject("paging");
-		User me = new MeFeedService().execute().get();
+	private void processResult(JSONObject object, int width) throws JSONException, InterruptedException, ExecutionException {
+		JSONArray dataArray = object.getJSONArray("data");
+		JSONObject pagingObject = object.getJSONObject("paging");
+		me = new MeFeedService().execute().get();
 		for (int i = 0; i < dataArray.length(); i++) {
 			JSONObject jsonObject = (JSONObject) dataArray.get(i);
 			Log.i("FEED IS ", jsonObject.toString());
@@ -160,18 +158,23 @@ public abstract class AbstractActivity extends Activity{
 	}
 	
 	private void addRefreshButtonToScrollViewLayout(final String nextFeed) {
-		ImageView refreshButton = new ImageView(context);
+		final ImageView refreshButton = new ImageView(context);
 		refreshButton.setImageDrawable(context.getResources().getDrawable(R.drawable.refresh_button));
 		refreshButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 	        	try {
+	        		scrollViewLayout.removeView(refreshButton);
 					String newFeed = new ExtraFeedsService().execute(nextFeed).get();
-					Toast.makeText(context, newFeed, Toast.LENGTH_SHORT).show();
+					Log.i("FEED IS ", new JSONObject(newFeed).toString());
+					
+					processResult(new JSONObject(newFeed), getWindowWidth());
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				} catch (ExecutionException e) {
+					e.printStackTrace();
+				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 			}
