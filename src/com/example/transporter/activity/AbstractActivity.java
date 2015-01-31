@@ -1,9 +1,5 @@
 package com.example.transporter.activity;
 
-import java.util.concurrent.ExecutionException;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
@@ -17,24 +13,19 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
-import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
 import com.example.transporter.R;
-import com.example.transporter.core.User;
-import com.example.transporter.form.FeedScrollView;
-import com.example.transporter.form.MenuButtonsLayout;
-import com.example.transporter.form.MenuView;
+import com.example.transporter.form.content.FeedScrollView;
+import com.example.transporter.form.content.MenuButtonsLayout;
+import com.example.transporter.form.content.MenuView;
 import com.example.transporter.service.ResultProcessor;
-import com.example.transporter.web.graph.ExtraFeedsService;
 import com.example.transporter.web.graph.FeedService;
-import com.example.transporter.web.graph.MeFeedService;
 
 public abstract class AbstractActivity extends Activity{
 	
@@ -47,7 +38,6 @@ public abstract class AbstractActivity extends Activity{
 	private RelativeLayout buttonsLayout;
 	private LinearLayout scrollViewLayout;
 	private LinearLayout menuView;
-	private User me;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +84,9 @@ public abstract class AbstractActivity extends Activity{
 		} else {
 			try {
 				if (processResult) {
-					processResult(new JSONObject(result).getJSONObject("feed"), width);
+					JSONObject object = new JSONObject(result).getJSONObject("feed"); 
+					new Thread(new ResultProcessor(context, scrollViewLayout, object, width)).start();
+					//processResult(new JSONObject(result).getJSONObject("feed"), width);
 				}
 			} catch (Exception e) {
 				Log.e("AbstractActivity", "Can't get result from" + getCommunityId());
@@ -143,43 +135,6 @@ public abstract class AbstractActivity extends Activity{
 		display.getSize(size);
 		int width = size.x;
 		return width;
-	}
-	
-	private void processResult(JSONObject object, int width) throws JSONException, InterruptedException, ExecutionException {
-		JSONArray dataArray = object.getJSONArray("data");
-		JSONObject pagingObject = object.getJSONObject("paging");
-		me = new MeFeedService().execute().get();
-		for (int i = 0; i < dataArray.length(); i++) {
-			JSONObject jsonObject = (JSONObject) dataArray.get(i);
-			Log.i("FEED IS ", jsonObject.toString());
-			runOnUiThread(new ResultProcessor(context, scrollViewLayout, jsonObject, width, me));
-		}
-		addRefreshButtonToScrollViewLayout(pagingObject.getString("next"));
-	}
-	
-	private void addRefreshButtonToScrollViewLayout(final String nextFeed) {
-		final ImageView refreshButton = new ImageView(context);
-		refreshButton.setImageDrawable(context.getResources().getDrawable(R.drawable.refresh_button));
-		refreshButton.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-	        	try {
-	        		scrollViewLayout.removeView(refreshButton);
-					String newFeed = new ExtraFeedsService().execute(nextFeed).get();
-					Log.i("FEED IS ", new JSONObject(newFeed).toString());
-					
-					processResult(new JSONObject(newFeed), getWindowWidth());
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				} catch (ExecutionException e) {
-					e.printStackTrace();
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		scrollViewLayout.addView(refreshButton);
 	}
 	
 	private void addDefaultButtons(int width) {

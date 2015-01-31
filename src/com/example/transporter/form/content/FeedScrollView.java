@@ -1,4 +1,4 @@
-package com.example.transporter.form;
+package com.example.transporter.form.content;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
